@@ -1,14 +1,12 @@
 import http from "http";
 
-
-
 import {
   getMovies,
   getMovieById,
   createMovie,
   deleteMoviesByIds,
   patchMovieById,
-  deleteMovieById
+  deleteMovieById,
 } from "./controllers/movieController";
 
 import {
@@ -17,7 +15,7 @@ import {
   createTVShow,
   deleteTVShowsByIds,
   patchTVShowById,
-  deleteTVShowById
+  deleteTVShowById,
 } from "./controllers/tvShowController";
 import {
   createPerson,
@@ -67,7 +65,7 @@ const server = http.createServer(async (req, res) => {
     if (req.url === `/api/movies`) {
       //get all movies
       getMovies(req, res);
-    }else if(req.url!.match(/\/api\/movies\/\w+/)){
+    } else if (req.url!.match(/\/api\/movies\/\w+/)) {
       const id = req.url!.split("/")[3];
       getMovieById(req, res, id);
     }
@@ -76,7 +74,7 @@ const server = http.createServer(async (req, res) => {
     if (req.url === `/api/tvs`) {
       //get all tv  shows
       getTVShows(req, res);
-    }else if(req.url!.match(/\/api\/tvs\/\w+/)){
+    } else if (req.url!.match(/\/api\/tvs\/\w+/)) {
       const id = req.url!.split("/")[3];
       getTVShowById(req, res, id);
     }
@@ -85,13 +83,11 @@ const server = http.createServer(async (req, res) => {
     if (req.url === `/api/people`) {
       //get all people
       getAllPeople(req, res);
-    } else if (
-      req.url!.match(/\/api\/people\/\w+/) 
-    ) {
+    } else if (req.url!.match(/\/api\/people\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
       getPersonById(req, res, id);
-    }else if (req.url!.match(/\/api\/people\?(\w+)=([^&]*)/)) {
+    } else if (req.url!.match(/\/api\/people\?(\w+)=([^&]*)/)) {
       const parts = req.url!.split("?");
 
       // Get query string
@@ -143,12 +139,11 @@ const server = http.createServer(async (req, res) => {
       createMovie(req, res);
     }
 
-     //tvs
-     if (req.url === `/api/tvs`) {
+    //tvs
+    if (req.url === `/api/tvs`) {
       //create person
       createTVShow(req, res);
     }
-
 
     //people
     if (req.url === `/api/people`) {
@@ -257,7 +252,4 @@ const server = http.createServer(async (req, res) => {
 server.listen(5050, () => {
   console.log("Server running on http://localhost:5050");
 });
-
-module.exports = server
-
 
