@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node-dev index.ts",
     "build": "tsc",
-    "vercel-build":"echo hello",
+    "vercel-build": "echo hello",
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "keywords": [],
@@ -20,6 +20,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@prisma/client": "^5.5.2"
+    "@prisma/client": "^5.5.2",
+    "dotenv": "^16.3.1"
   }
 }
