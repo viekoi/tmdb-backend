@@ -38,6 +38,9 @@ import {
 } from "./controllers/genreController";
 import { createCast, patchCastById } from "./controllers/castController";
 
+
+const PORT = process.env.PORT || 5050;
+
 const server = http.createServer(async (req, res) => {
   console.log(req.url);
   // Set CORS headers
@@ -249,10 +252,9 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(5050, () => {
-  console.log("Server running on http://localhost:5050");
+server.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
 
 
-module.exports = server;
 
