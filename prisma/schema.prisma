@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+
+
+model Media{
+  id String @id @default(uuid())
+  title String 
+  mediaType String
+  imageUrl String
+  backDropImageUrl String
+  originalLanguage String
+  trailerUrl String
+  runTime String
+  overview String @db.LongText
+  budget  Int
+  revenue Int
+  status String @default("post production")
+  casts Cast[]
+  genres MediaGenre[]
+  director Person?  @relation(fields: [directorId],references: [id],onDelete: Cascade)
+  directorId String?
+  releasedDay DateTime?
+  @@index([directorId])
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+
+
+model MediaGenre{
+  mediaId String
+  media   Media @relation(fields: [mediaId],references: [id],onDelete: Cascade)
+  genreId String
+  genre   Genre @relation(fields: [genreId],references: [id],onDelete: Cascade)
+
+  @@id([mediaId,genreId])
+  @@index([mediaId])
+  @@index([genreId])
+}
+
+
+model Cast{
+  id String @id @default(uuid())
+  media Media @relation(fields: [mediaId],references: [id], onDelete: Cascade)
+  mediaId String
+  personId String?
+  person Person? @relation(fields: [personId],references: [id],onDelete: Cascade)
+  character     String
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@index([mediaId])
+  @@index([personId])
+
+}
+
+
+
+model Person{
+  id String @id @default(uuid())
+  imageUrl String
+  fullName String
+  biography String @db.LongText
+  knownFor String
+  gender   String
+  dob       DateTime
+  pob      String
+  castIn     Cast[]
+  director Media[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+
+
+model Genre{
+   id String @id @default(uuid())
+   name String @unique
+   medias MediaGenre[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+   
+}
