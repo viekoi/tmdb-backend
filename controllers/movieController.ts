@@ -1,4 +1,4 @@
-import { Media} from "@prisma/client";
+import { Media } from "@prisma/client";
 import prismadb from "../lib/prismadb";
 import http from "http";
 
@@ -11,13 +11,13 @@ async function getMovies(req: http.IncomingMessage, res: http.ServerResponse) {
   try {
     const movies = await prismadb.media.findMany({
       where: {
-        mediaType:"movie"
+        mediaType: "movie",
       },
       include: {
         casts: {
-          include:{
-            person:true
-          }
+          include: {
+            person: true,
+          },
         },
         genres: {
           include: {
@@ -44,13 +44,13 @@ async function getMovieById(
     const movie = await prismadb.media.findUnique({
       where: {
         id: id,
-        mediaType:"movie"
+        mediaType: "movie",
       },
       include: {
-        casts:{
-          include:{
-            person:true
-          }
+        casts: {
+          include: {
+            person: true,
+          },
         },
         genres: true,
         director: true,
@@ -62,6 +62,66 @@ async function getMovieById(
     console.log("[movie_GET]", error);
     resHandler(res, 404, { message: "movie Not Found" });
   }
+}
+
+async function getMoviesByFilter(
+  req: http.IncomingMessage,
+  res: http.ServerResponse
+) {
+  let body = "";
+
+  req.on("data", (chunk) => {
+    body += chunk.toString();
+  });
+
+  req.on("end", async () => {
+    const {
+      title,
+      genreIds,
+      releasedDayStart,
+      releasedDayEnd,
+    }: {
+      title: string | undefined;
+      genreIds: string[] | undefined;
+      releasedDayStart: Date | undefined;
+      releasedDayEnd: Date | undefined;
+    } = JSON.parse(body);
+
+    try {
+      const movies = await prismadb.media.findMany({
+        where: {
+          title:{
+            contains:title?.trim()
+          },
+          mediaType: "movie",
+          releasedDay: {
+            gte: releasedDayStart,
+            lte: releasedDayEnd,
+          },
+        },
+        include: {
+          casts: {
+            include: {
+              person: true,
+            },
+          },
+          genres: {
+            where: {
+              genreId: {
+                in: genreIds,
+              },
+            },
+          },
+          director: true,
+        },
+      });
+
+      resHandler(res, movies !== null ? 200 : 404, movies);
+    } catch (error) {
+      console.log("[movie_POST]", error);
+      resHandler(res, 404, error);
+    }
+  });
 }
 
 async function createMovie(
@@ -95,7 +155,7 @@ async function createMovie(
       const movie: Media = await prismadb.media.create({
         data: {
           title,
-          mediaType:"movie",
+          mediaType: "movie",
           originalLanguage,
           imageUrl,
           backDropImageUrl,
@@ -113,7 +173,7 @@ async function createMovie(
               }),
             },
           },
-          directorId
+          directorId,
         },
       });
 
@@ -150,15 +210,15 @@ async function patchMovieById(
       status,
       releasedDay,
       genreIds,
-      directorId
-    }: Media & {  genreIds: any } = JSON.parse(body);
+      directorId,
+    }: Media & { genreIds: any } = JSON.parse(body);
 
     try {
       console.log(genreIds);
       const movie: Media = await prismadb.media.update({
         where: {
           id: id,
-          mediaType:"movie"
+          mediaType: "movie",
         },
         data: {
           title,
@@ -180,7 +240,7 @@ async function patchMovieById(
               }),
             },
           },
-          directorId
+          directorId,
         },
       });
       resHandler(res, movie !== null ? 200 : 404, movie);
@@ -240,11 +300,14 @@ async function deleteMovieById(
   }
 }
 
+
+
 export {
   getMovies,
   getMovieById,
+  getMoviesByFilter,
   createMovie,
   deleteMovieById,
   deleteMoviesByIds,
-  patchMovieById,
+  patchMovieById
 };

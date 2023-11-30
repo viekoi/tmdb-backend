@@ -64,6 +64,66 @@ async function getTVShowById(
   }
 }
 
+async function getTVShowsByFilter(
+  req: http.IncomingMessage,
+  res: http.ServerResponse
+) {
+  let body = "";
+
+  req.on("data", (chunk) => {
+    body += chunk.toString();
+  });
+
+  req.on("end", async () => {
+    const {
+      title,
+      genreIds,
+      releasedDayStart,
+      releasedDayEnd,
+    }: {
+      title: string | undefined;
+      genreIds: string[] | undefined;
+      releasedDayStart: Date | undefined;
+      releasedDayEnd: Date | undefined;
+    } = JSON.parse(body);
+
+    try {
+      const shows = await prismadb.media.findMany({
+        where: {
+          title:{
+            contains:title?.trim()
+          },
+          mediaType: "TVShow",
+          releasedDay: {
+            gte: releasedDayStart,
+            lte: releasedDayEnd,
+          },
+        },
+        include: {
+          casts: {
+            include: {
+              person: true,
+            },
+          },
+          genres: {
+            where: {
+              genreId: {
+                in: genreIds,
+              },
+            },
+          },
+          director: true,
+        },
+      });
+
+      resHandler(res, shows !== null ? 200 : 404, shows);
+    } catch (error) {
+      console.log("[SHOWS_POST]", error);
+      resHandler(res, 404, error);
+    }
+  });
+}
+
 async function createTVShow(
   req: http.IncomingMessage,
   res: http.ServerResponse
@@ -242,6 +302,7 @@ async function deleteTVShowById(
 
 export {
   getTVShows,
+  getTVShowsByFilter,
   getTVShowById,
   createTVShow,
   deleteTVShowById,

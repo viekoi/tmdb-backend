@@ -7,6 +7,7 @@ import {
   deleteMoviesByIds,
   patchMovieById,
   deleteMovieById,
+  getMoviesByFilter,
 } from "./controllers/movieController";
 
 import {
@@ -16,6 +17,7 @@ import {
   deleteTVShowsByIds,
   patchTVShowById,
   deleteTVShowById,
+  getTVShowsByFilter,
 } from "./controllers/tvShowController";
 import {
   createPerson,
@@ -36,7 +38,7 @@ import {
   getGenreById,
   getGenreByName,
 } from "./controllers/genreController";
-import { createCast, patchCastById } from "./controllers/castController";
+import { createCast, deleteCastById, patchCastById } from "./controllers/castController";
 
 
 const PORT = process.env.PORT || 5050;
@@ -60,6 +62,7 @@ const server = http.createServer(async (req, res) => {
     res.end();
     return;
   }
+ 
 
   if (req.method === `GET`) {
     //GET
@@ -71,6 +74,8 @@ const server = http.createServer(async (req, res) => {
     } else if (req.url!.match(/\/api\/movies\/\w+/)) {
       const id = req.url!.split("/")[3];
       getMovieById(req, res, id);
+    }else if(req.url===`/api/moviesbyfilter`){
+      getMoviesByFilter(req,res)
     }
 
     //tv shows
@@ -80,6 +85,8 @@ const server = http.createServer(async (req, res) => {
     } else if (req.url!.match(/\/api\/tvs\/\w+/)) {
       const id = req.url!.split("/")[3];
       getTVShowById(req, res, id);
+    }else if(req.url===`/api/showsbyfilter`){
+      getTVShowsByFilter(req,res)
     }
 
     //people
@@ -205,6 +212,13 @@ const server = http.createServer(async (req, res) => {
       const id = req.url!.split("/")[3];
       deleteGenreById(req, res, id);
     }
+
+    //casts
+    if (req.url!.match(/\/api\/casts\/\w+/)) {
+      const id = req.url!.split("/")[3];
+      deleteCastById(req, res,id);
+    }
+
   } else if (req.method === `PATCH`) {
     //PATCH
 

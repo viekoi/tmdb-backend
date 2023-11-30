@@ -74,8 +74,28 @@ async function createCast(
     });
   }
 
+  async function deleteCastById(
+    req: http.IncomingMessage,
+    res: http.ServerResponse,
+    id: string
+  ) {
+    try {
+      const cast = await prismadb.cast.delete({
+        where: {
+          id: id,
+        },
+      });
+  
+      resHandler(res, cast !== null ? 200 : 404, cast);
+    } catch (error) {
+      console.log("[cast_DELETE]", error);
+      resHandler(res, 404, { message: "cast Not DElETE" });
+    }
+  }
+
 export {
     createCast,
-    patchCastById
+    patchCastById,
+    deleteCastById
 
 };
