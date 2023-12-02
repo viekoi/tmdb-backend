@@ -31,11 +31,11 @@ async function register(req: http.IncomingMessage, res: http.ServerResponse) {
 
     try {
       if (!userName) {
-        throw new Error("user name is required");
+        return resHandler(res, 404, "user name is required");
       }
 
       if (!password) {
-        throw new Error("password is required");
+        return resHandler(res, 404, "password is required");
       }
 
       const existedUser = await prismadb.user.findFirst({
@@ -45,7 +45,7 @@ async function register(req: http.IncomingMessage, res: http.ServerResponse) {
       });
 
       if (existedUser) {
-        throw new Error("user name existed");
+        return resHandler(res, 404, "user name existed");
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -58,7 +58,7 @@ async function register(req: http.IncomingMessage, res: http.ServerResponse) {
       });
 
       if (!user) {
-        throw new Error("user did not get created");
+        return resHandler(res, 404, "user did not get created");
       }
 
       return resHandler(res, 200, "user created");
@@ -92,11 +92,11 @@ async function login(req: http.IncomingMessage, res: http.ServerResponse) {
 
     try {
       if (!userName) {
-        throw new Error("user name is required");
+        return resHandler(res, 404, "user name is required");
       }
 
       if (!password) {
-        throw new Error("password is required");
+        return resHandler(res, 404, "password is required");
       }
 
       const user = await prismadb.user.findFirst({
@@ -109,14 +109,14 @@ async function login(req: http.IncomingMessage, res: http.ServerResponse) {
       });
 
       if (!user) {
-        throw new Error("User not found");
+        return resHandler(res, 404, "User not found");
       } else {
         const passwordMatch = await bcrypt.compare(
           password,
           user.hashedPassword
         );
         if (!passwordMatch) {
-          throw new Error("Unauthorized");
+          return resHandler(res, 404, "Unauthorized");
         }
 
         const currentDate = new Date();
@@ -153,6 +153,7 @@ async function login(req: http.IncomingMessage, res: http.ServerResponse) {
 
         if (!dbToken) {
           return resHandler(res, 404, "Generate token failed");
+
         }
         return resHandler(res, 200, {
           userName: user.userName,
@@ -203,8 +204,8 @@ async function resign(req: http.IncomingMessage, res: http.ServerResponse) {
           value: token,
         },
       });
-      return resHandler(res, 200,{
-        userName:verifyToken.user.userName
+      return resHandler(res, 200, {
+        userName: verifyToken.user.userName,
       });
     }
   } else {
