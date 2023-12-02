@@ -38,6 +38,9 @@ import {
   getGenreById,
   getGenreByName,
 } from "./controllers/genreController";
+
+import { login, register, resign } from "./controllers/userController";
+
 import { createCast, deleteCastById, patchCastById } from "./controllers/castController";
 
 
@@ -67,6 +70,16 @@ const server = http.createServer(async (req, res) => {
   if (req.method === `GET`) {
     //GET
 
+    //users
+    if(req.url === `/api/login`) {
+      //get all movies
+      login(req,res)
+    }
+
+    if(req.url === `/api/resign`) {
+      //get all movies
+      resign(req,res)
+    }
     //movies
     if (req.url === `/api/movies`) {
       //get all movies
@@ -142,6 +155,13 @@ const server = http.createServer(async (req, res) => {
     }
   } else if (req.method === `POST`) {
     //POST
+
+    //Users
+    if (req.url === `/api/register`) {
+      //create person
+      register(req, res);
+    }
+
 
     //movies
     if (req.url === `/api/movies`) {
