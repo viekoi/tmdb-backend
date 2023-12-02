@@ -18,7 +18,11 @@ async function getAllPeople(
     const people = await prismadb.person.findMany({
       where: {},
       include: {
-        castIn: true,
+        castIn:{
+          include:{
+            media:true
+          }
+        },
         director: true,
       },
     });
