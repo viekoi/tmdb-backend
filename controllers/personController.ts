@@ -47,7 +47,8 @@ async function getPersonById(
         castIn:{
           include:{
             media:true
-          },
+          }
+        },
         director: true,
       },
     });
