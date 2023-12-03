@@ -62,7 +62,7 @@ const server = http.createServer(async (req, res) => {
     );
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Content-Type, Authorization"
+      "Content-Type, Authorization, x-auth-password"
     );
     res.statusCode = 200;
     res.end();

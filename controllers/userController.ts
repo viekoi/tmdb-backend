@@ -23,12 +23,12 @@ async function register(req: http.IncomingMessage, res: http.ServerResponse) {
   req.on("end", async () => {
     const {
       userName,
-      password,
     }: {
       userName: string;
-      password: string;
     } = JSON.parse(body);
 
+    const password = String(req.headers["x-auth-password"]);
+    console.log(password)
     try {
       if (!userName) {
         return resHandler(res, 404, "user name is required");
@@ -81,14 +81,12 @@ async function login(req: http.IncomingMessage, res: http.ServerResponse) {
   req.on("end", async () => {
     const {
       userName,
-      password,
     }: {
       userName: string;
-      password: string;
     } = JSON.parse(body);
-
+    const password = String(req.headers["x-auth-password"]);
     console.log(userName);
-    console.log(password);
+    console.log(password)
 
     try {
       if (!userName) {
@@ -153,10 +151,10 @@ async function login(req: http.IncomingMessage, res: http.ServerResponse) {
 
         if (!dbToken) {
           return resHandler(res, 404, "Generate token failed");
-
         }
         return resHandler(res, 200, {
           userName: user.userName,
+          token: token,
         });
       }
     } catch (error) {
@@ -168,7 +166,7 @@ async function login(req: http.IncomingMessage, res: http.ServerResponse) {
 
 async function resign(req: http.IncomingMessage, res: http.ServerResponse) {
   const token = req.headers.authorization?.split(" ")[1];
-
+  console.log(token);
   if (token) {
     const verifyToken = await prismadb.token.findFirst({
       where: {
@@ -204,8 +202,10 @@ async function resign(req: http.IncomingMessage, res: http.ServerResponse) {
           value: token,
         },
       });
+      if (!dbToken) return resHandler(res, 404, "fail to generate token");
       return resHandler(res, 200, {
         userName: verifyToken.user.userName,
+        token: token,
       });
     }
   } else {
