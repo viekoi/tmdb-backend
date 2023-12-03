@@ -41,8 +41,11 @@ import {
 
 import { login, register, resign } from "./controllers/userController";
 
-import { createCast, deleteCastById, patchCastById } from "./controllers/castController";
-
+import {
+  createCast,
+  deleteCastById,
+  patchCastById,
+} from "./controllers/castController";
 
 const PORT = process.env.PORT || 5050;
 
@@ -65,21 +68,11 @@ const server = http.createServer(async (req, res) => {
     res.end();
     return;
   }
- 
 
   if (req.method === `GET`) {
     //GET
 
-    //users
-    if(req.url === `/api/login`) {
-      //get all movies
-      login(req,res)
-    }
-
-    if(req.url === `/api/resign`) {
-      //get all movies
-      resign(req,res)
-    }
+    
     //movies
     if (req.url === `/api/movies`) {
       //get all movies
@@ -87,8 +80,8 @@ const server = http.createServer(async (req, res) => {
     } else if (req.url!.match(/\/api\/movies\/\w+/)) {
       const id = req.url!.split("/")[3];
       getMovieById(req, res, id);
-    }else if(req.url===`/api/moviesbyfilter`){
-      getMoviesByFilter(req,res)
+    } else if (req.url === `/api/moviesbyfilter`) {
+      getMoviesByFilter(req, res);
     }
 
     //tv shows
@@ -98,8 +91,8 @@ const server = http.createServer(async (req, res) => {
     } else if (req.url!.match(/\/api\/tvs\/\w+/)) {
       const id = req.url!.split("/")[3];
       getTVShowById(req, res, id);
-    }else if(req.url===`/api/showsbyfilter`){
-      getTVShowsByFilter(req,res)
+    } else if (req.url === `/api/showsbyfilter`) {
+      getTVShowsByFilter(req, res);
     }
 
     //people
@@ -162,6 +155,16 @@ const server = http.createServer(async (req, res) => {
       register(req, res);
     }
 
+    //users
+    if (req.url === `/api/login`) {
+      //get all movies
+      login(req, res);
+    }
+
+    if (req.url === `/api/resign`) {
+      //get all movies
+      resign(req, res);
+    }
 
     //movies
     if (req.url === `/api/movies`) {
@@ -236,9 +239,8 @@ const server = http.createServer(async (req, res) => {
     //casts
     if (req.url!.match(/\/api\/casts\/\w+/)) {
       const id = req.url!.split("/")[3];
-      deleteCastById(req, res,id);
+      deleteCastById(req, res, id);
     }
-
   } else if (req.method === `PATCH`) {
     //PATCH
 
@@ -289,6 +291,3 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-
-
-
