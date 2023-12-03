@@ -72,7 +72,6 @@ const server = http.createServer(async (req, res) => {
   if (req.method === `GET`) {
     //GET
 
-    
     //movies
     if (req.url === `/api/movies`) {
       //get all movies
@@ -80,8 +79,6 @@ const server = http.createServer(async (req, res) => {
     } else if (req.url!.match(/\/api\/movies\/\w+/)) {
       const id = req.url!.split("/")[3];
       getMovieById(req, res, id);
-    } else if (req.url === `/api/moviesbyfilter`) {
-      getMoviesByFilter(req, res);
     }
 
     //tv shows
@@ -91,8 +88,6 @@ const server = http.createServer(async (req, res) => {
     } else if (req.url!.match(/\/api\/tvs\/\w+/)) {
       const id = req.url!.split("/")[3];
       getTVShowById(req, res, id);
-    } else if (req.url === `/api/showsbyfilter`) {
-      getTVShowsByFilter(req, res);
     }
 
     //people
@@ -170,12 +165,16 @@ const server = http.createServer(async (req, res) => {
     if (req.url === `/api/movies`) {
       //create person
       createMovie(req, res);
+    } else if (req.url === `/api/moviesbyfilter`) {
+      getMoviesByFilter(req, res);
     }
 
     //tvs
     if (req.url === `/api/tvs`) {
       //create person
       createTVShow(req, res);
+    } else if (req.url === `/api/showsbyfilter`) {
+      getTVShowsByFilter(req, res);
     }
 
     //people
