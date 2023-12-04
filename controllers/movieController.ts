@@ -219,7 +219,7 @@ async function getMoviesByFilter(
       const totalPages = Math.ceil(totalCount / take);
 
       const response = {
-        movies,
+        media:movies,
         totalCount,
         totalPages,
       };
