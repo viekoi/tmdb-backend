@@ -7,6 +7,10 @@ const resHandler = (res: http.ServerResponse, status: number, data: any) => {
   res.end(JSON.stringify(data));
 };
 
+
+
+
+
 async function getMovies(req: http.IncomingMessage, res: http.ServerResponse) {
   try {
     const movies = await prismadb.media.findMany({
@@ -64,6 +68,65 @@ async function getMovieById(
   }
 }
 
+// async function getMoviesByFilter(
+//   req: http.IncomingMessage,
+//   res: http.ServerResponse
+// ) {
+//   let body = "";
+
+//   req.on("data", (chunk) => {
+//     body += chunk.toString();
+//   });
+
+//   req.on("end", async () => {
+//     const {
+//       title,
+//       genreIds,
+//       releasedDayStart,
+//       releasedDayEnd,
+//     }: {
+//       title: string | undefined;
+//       genreIds: string[] | undefined;
+//       releasedDayStart: Date | undefined;
+//       releasedDayEnd: Date | undefined;
+//     } = JSON.parse(body);
+
+//     try {
+//       const movies = await prismadb.media.findMany({
+//         where: {
+//           title:{
+//             contains:title?.trim()
+//           },
+//           mediaType: "movie",
+//           releasedDay: {
+//             gte: releasedDayStart,
+//             lte: releasedDayEnd,
+//           },
+//         },
+//         include: {
+//           casts: {
+//             include: {
+//               person: true,
+//             },
+//           },
+//           genres: {
+//             where: {
+//               genreId: {
+//                 in: genreIds,
+//               },
+//             },
+//           },
+//           director: true,
+//         },
+//       });
+
+//       resHandler(res, movies !== null ? 200 : 404, movies);
+//     } catch (error) {
+//       console.log("[movie_POST]", error);
+//       resHandler(res, 404, error);
+//     }
+//   });
+// }
 async function getMoviesByFilter(
   req: http.IncomingMessage,
   res: http.ServerResponse
@@ -80,18 +143,42 @@ async function getMoviesByFilter(
       genreIds,
       releasedDayStart,
       releasedDayEnd,
+      pageNumber,
+      pageSize,
     }: {
       title: string | undefined;
       genreIds: string[] | undefined;
       releasedDayStart: Date | undefined;
       releasedDayEnd: Date | undefined;
+      pageNumber: number | undefined;
+      pageSize: number | undefined;
     } = JSON.parse(body);
 
     try {
+      let take 
+      let skip 
+     
+
+      if(!pageSize){
+        take = 10
+      }else{
+        take = pageSize
+      }
+
+      if(!pageNumber){
+        skip = 0
+      }else{
+        skip = (pageNumber - 1) * take;
+      }
+
+
+     
       const movies = await prismadb.media.findMany({
+        skip,
+        take,
         where: {
-          title:{
-            contains:title?.trim()
+          title: {
+            contains: title?.trim(),
           },
           mediaType: "movie",
           releasedDay: {
@@ -116,7 +203,28 @@ async function getMoviesByFilter(
         },
       });
 
-      resHandler(res, movies !== null ? 200 : 404, movies);
+      const totalCount = await prismadb.media.count({
+        where: {
+          title: {
+            contains: title?.trim(),
+          },
+          mediaType: "movie",
+          releasedDay: {
+            gte: releasedDayStart,
+            lte: releasedDayEnd,
+          },
+        },
+      });
+
+      const totalPages = Math.ceil(totalCount / take);
+
+      const response = {
+        movies,
+        totalCount,
+        totalPages,
+      };
+
+      resHandler(res, movies !== null ? 200 : 404, response);
     } catch (error) {
       console.log("[movie_POST]", error);
       resHandler(res, 404, error);
