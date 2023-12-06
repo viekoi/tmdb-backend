@@ -39,6 +39,7 @@ async function getMovies(req: http.IncomingMessage, res: http.ServerResponse) {
   }
 }
 
+
 async function getMovieById(
   req: http.IncomingMessage,
   res: http.ServerResponse,
@@ -185,6 +186,13 @@ async function getMoviesByFilter(
             gte: releasedDayStart,
             lte: releasedDayEnd,
           },
+          genres:{
+            some:{
+              genreId:{
+                in:genreIds
+              }
+            }
+          }
         },
         include: {
           casts: {
@@ -192,13 +200,7 @@ async function getMoviesByFilter(
               person: true,
             },
           },
-          genres: {
-            where: {
-              genreId: {
-                in: genreIds,
-              },
-            },
-          },
+          genres: true,
           director: true,
         },
       });

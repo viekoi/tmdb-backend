@@ -122,6 +122,13 @@ async function getTVShowsByFilter(
             gte: releasedDayStart,
             lte: releasedDayEnd,
           },
+          genres:{
+            some:{
+              genreId:{
+                in:genreIds
+              }
+            }
+          }
         },
         include: {
           casts: {
@@ -129,13 +136,7 @@ async function getTVShowsByFilter(
               person: true,
             },
           },
-          genres: {
-            where: {
-              genreId: {
-                in: genreIds,
-              },
-            },
-          },
+          genres: true,
           director: true,
         },
       });
