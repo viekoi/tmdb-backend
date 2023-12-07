@@ -1,51 +1,11 @@
 import http from "http";
 
-import {
-  getMovies,
-  getMovieById,
-  createMovie,
-  deleteMoviesByIds,
-  patchMovieById,
-  deleteMovieById,
-  getMoviesByFilter,
-} from "./controllers/movieController";
-
-import {
-  getTVShows,
-  getTVShowById,
-  createTVShow,
-  deleteTVShowsByIds,
-  patchTVShowById,
-  deleteTVShowById,
-  getTVShowsByFilter,
-} from "./controllers/tvShowController";
-import {
-  createPerson,
-  getAllPeople,
-  getPersonById,
-  deleteGroupOfPeopleByIds,
-  patchPersonById,
-  deletePersonById,
-  getPeopleByFullName,
-} from "./controllers/personController";
-
-import {
-  getAllGenres,
-  createGenre,
-  deleteGenresByIds,
-  patchGenreById,
-  deleteGenreById,
-  getGenreById,
-  getGenreByName,
-} from "./controllers/genreController";
-
-import { login, register, resign } from "./controllers/userController";
-
-import {
-  createCast,
-  deleteCastById,
-  patchCastById,
-} from "./controllers/castController";
+import CGenre from "./controllers/CGenre";
+import CMovie from "./controllers/CMovie";
+import CTVShow from "./controllers/CTVShow";
+import CPerson from "./controllers/CPerson";
+import CCast from "./controllers/CCast";
+import CUser from "./controllers/CUser";
 
 const PORT = process.env.PORT || 5050;
 
@@ -75,29 +35,29 @@ const server = http.createServer(async (req, res) => {
     //movies
     if (req.url === `/api/movies`) {
       //get all movies
-      getMovies(req, res);
+      CMovie.getMovies(req, res);
     } else if (req.url!.match(/\/api\/movies\/\w+/)) {
       const id = req.url!.split("/")[3];
-      getMovieById(req, res, id);
+      CMovie.getMovieById(req, res, id);
     }
 
     //tv shows
     if (req.url === `/api/tvs`) {
       //get all tv  shows
-      getTVShows(req, res);
+      CTVShow.getTVShows(req, res);
     } else if (req.url!.match(/\/api\/tvs\/\w+/)) {
       const id = req.url!.split("/")[3];
-      getTVShowById(req, res, id);
+      CTVShow.getTVShowById(req, res, id);
     }
 
     //people
     if (req.url === `/api/people`) {
       //get all people
-      getAllPeople(req, res);
+      CPerson.getAllPeople(req, res);
     } else if (req.url!.match(/\/api\/people\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
-      getPersonById(req, res, id);
+      CPerson.getPersonById(req, res, id);
     } else if (req.url!.match(/\/api\/people\?(\w+)=([^&]*)/)) {
       const parts = req.url!.split("?");
 
@@ -113,17 +73,18 @@ const server = http.createServer(async (req, res) => {
         params[key] = decodeURIComponent(value);
       }
       console.log(params);
-      getPeopleByFullName(req, res, params["fullName"]);
+      CPerson.getPersonByFullName(req, res, params["fullName"]);
     }
 
     //genres
     if (req.url === "/api/genres") {
       // Get all genres
-      getAllGenres(req, res);
+
+      CGenre.getAllGenres(req, res);
     } else if (req.url!.match(/\/api\/genres\/\w+/)) {
       // Get genre by ID
       const id = req.url!.split("/")[3];
-      getGenreById(req, res, id);
+      CGenre.getGenreById(req, res, id);
     } else if (req.url!.match(/\/api\/genres\?(\w+)=([^&]*)/)) {
       const parts = req.url!.split("?");
 
@@ -139,7 +100,7 @@ const server = http.createServer(async (req, res) => {
         params[key] = decodeURIComponent(value);
       }
       console.log(params);
-      getGenreByName(req, res, params["name"]);
+      CGenre.getGenreByName(req, res, params["name"]);
     }
   } else if (req.method === `POST`) {
     //POST
@@ -147,51 +108,50 @@ const server = http.createServer(async (req, res) => {
     //Users
     if (req.url === `/api/register`) {
       //create person
-      register(req, res);
+      CUser.register(req, res);
     }
 
     //users
     if (req.url === `/api/login`) {
-      //get all movies
-      login(req, res);
+      CUser.login(req, res);
     }
 
     if (req.url === `/api/resign`) {
-      //get all movies
-      resign(req, res);
+      CUser.resign(req, res);
     }
 
     //movies
     if (req.url === `/api/movies`) {
       //create person
-      createMovie(req, res);
+      CMovie.createMovie(req, res);
     } else if (req.url === `/api/moviesbyfilter`) {
-      getMoviesByFilter(req, res);
+      CMovie.getMoviesByFilter(req, res);
     }
 
     //tvs
     if (req.url === `/api/tvs`) {
       //create person
-      createTVShow(req, res);
+      CTVShow.createTVShow(req, res);
     } else if (req.url === `/api/showsbyfilter`) {
-      getTVShowsByFilter(req, res);
+      CTVShow.getTVShowsByFilter(req, res);
     }
 
     //people
     if (req.url === `/api/people`) {
       //create person
-      createPerson(req, res);
+      CPerson.createPerson(req, res);
     }
     //genres
     if (req.url === `/api/genres`) {
       //create person
-      createGenre(req, res);
+
+      CGenre.createGenre(req, res);
     }
 
     //casts
     if (req.url === `/api/casts`) {
       //create person
-      createCast(req, res);
+      CCast.createCast(req, res);
     }
   } else if (req.method === `DELETE`) {
     //DELETE
@@ -199,46 +159,46 @@ const server = http.createServer(async (req, res) => {
     //movies
     if (req.url === `/api/movies`) {
       //create person
-      deleteMoviesByIds(req, res);
+      CMovie.deleteMoviesByIds(req, res);
     } else if (req.url!.match(/\/api\/movies\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
-      deleteMovieById(req, res, id);
+      CMovie.deleteMovieById(req, res, id);
     }
 
     //tvs
     if (req.url === `/api/tvs`) {
       //create person
-      deleteTVShowsByIds(req, res);
+      CTVShow.deleteTVShowsByIds(req, res);
     } else if (req.url!.match(/\/api\/tvs\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
-      deleteTVShowById(req, res, id);
+      CTVShow.deleteTVShowById(req, res, id);
     }
 
     //people
     if (req.url === `/api/people`) {
       //create person
-      deleteGroupOfPeopleByIds(req, res);
+      CPerson.deleteGroupOfPeopleByIds(req, res);
     } else if (req.url!.match(/\/api\/people\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
-      deletePersonById(req, res, id);
+      CPerson.deletePersonById(req, res, id);
     }
     //genres
     if (req.url === `/api/genres`) {
       //create person
-      deleteGenresByIds(req, res);
+      CGenre.deleteGenresByIds(req, res);
     } else if (req.url!.match(/\/api\/genres\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
-      deleteGenreById(req, res, id);
+      CGenre.deleteGenreById(req, res, id);
     }
 
     //casts
     if (req.url!.match(/\/api\/casts\/\w+/)) {
       const id = req.url!.split("/")[3];
-      deleteCastById(req, res, id);
+      CCast.deleteCastById(req, res, id);
     }
   } else if (req.method === `PATCH`) {
     //PATCH
@@ -247,35 +207,35 @@ const server = http.createServer(async (req, res) => {
     if (req.url!.match(/\/api\/people\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
-      patchPersonById(req, res, id);
+      CPerson.patchPersonById(req, res, id);
     }
 
     //tvs
     if (req.url!.match(/\/api\/tvs\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
-      patchTVShowById(req, res, id);
+      CTVShow.patchTVShowById(req, res, id);
     }
 
     //genres
     if (req.url!.match(/\/api\/genres\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
-      patchGenreById(req, res, id);
+      CGenre.patchGenreById(req, res, id);
     }
 
     //movies
     if (req.url!.match(/\/api\/movies\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
-      patchMovieById(req, res, id);
+      CMovie.patchMovieById(req, res, id);
     }
 
     //casts
     if (req.url!.match(/\/api\/casts\/\w+/)) {
       //get person by id
       const id = req.url!.split("/")[3];
-      patchCastById(req, res, id);
+      CCast.patchCastById(req, res, id);
     }
   } else {
     res.writeHead(404, { "Content-Type": "application/json" });
