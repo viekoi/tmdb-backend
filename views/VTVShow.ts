@@ -124,6 +124,13 @@ class VTVShow {
             gte: model.releasedDayStart,
             lte: model.releasedDayEnd,
           },
+          genres: {
+            some: {
+              genreId: {
+                in: model.genreIds,
+              },
+            },
+          },
         },
       });
 
@@ -135,7 +142,7 @@ class VTVShow {
         totalPages,
       };
 
-      this.resHandler(res,shows !== null ? 200 : 404, response);
+      this.resHandler(res, shows !== null ? 200 : 404, response);
     } catch (error) {
       console.log("[TVShow_POST]", error);
       this.resHandler(res, 404, error);
@@ -197,7 +204,7 @@ class VTVShow {
           status: model.status,
           releasedDay: model.releasedDay,
           genres: {
-            deleteMany:{},
+            deleteMany: {},
             createMany: {
               data: model.genreIds!.map((id: string) => {
                 return { genreId: id };

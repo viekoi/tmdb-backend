@@ -9,6 +9,7 @@ class MPerson {
   imageUrl?: string;
   peopleIds?:string[]
 
+
   constructor({
     id,
     fullName,

@@ -124,8 +124,18 @@ class VMovie {
             gte: model.releasedDayStart,
             lte: model.releasedDayEnd,
           },
+          genres: {
+            some: {
+              genreId: {
+                in: model.genreIds,
+              },
+            },
+          },
         },
       });
+
+      console.log(totalCount);
+      console.log(take);
 
       const totalPages = Math.ceil(totalCount / take);
 
@@ -197,7 +207,7 @@ class VMovie {
           status: model.status,
           releasedDay: model.releasedDay,
           genres: {
-            deleteMany:{},
+            deleteMany: {},
             createMany: {
               data: model.genreIds!.map((id: string) => {
                 return { genreId: id };
